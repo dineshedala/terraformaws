@@ -7,5 +7,5 @@ variable "aws_region" {
 variable "bucket_name" {
   description = "Base name for the S3 bucket (must be globally unique)"
   type        = string
-  default     = "my-terraform-demo-bucket"
+  default     = "dinesh-learnaws-my-terraform-demo-bucket"
 }
