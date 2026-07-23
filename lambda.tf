@@ -67,14 +67,12 @@ resource "aws_lambda_permission" "allow_s3" {
 }
 
 # S3 event notification -> trigger Lambda on .csv upload
-resource "aws_s3_bucket_notification" "csv_trigger" {
-  bucket = aws_s3_bucket.this.id
-
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.csv_processor.arn
-    events               = ["s3:ObjectCreated:*"]
-    filter_suffix        = ".csv"
-  }
+# Using the dedicated resource instead of the deprecated nested block
+resource "aws_s3_bucket_notification_lambda_function" "csv_trigger" {
+  bucket      = aws_s3_bucket.this.id
+  lambda_arn  = aws_lambda_function.csv_processor.arn
+  events      = ["s3:ObjectCreated:*"]
+  filter_suffix = ".csv"
 
   depends_on = [aws_lambda_permission.allow_s3]
 }
