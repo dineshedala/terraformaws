@@ -6,10 +6,6 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.5"
-    }
     archive = {
       source  = "hashicorp/archive"
       version = "~> 2.4"
@@ -21,13 +17,8 @@ provider "aws" {
   region = var.aws_region
 }
 
-# Random suffix so the bucket name is globally unique
-resource "random_id" "suffix" {
-  byte_length = 4
-}
-
 resource "aws_s3_bucket" "this" {
-  bucket = "${var.bucket_name}-${random_id.suffix.hex}"
+  bucket = var.bucket_name
 
   tags = {
     Environment = "demo"
