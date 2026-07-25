@@ -1,11 +1,11 @@
-# Zip the Lambda code at plan/apply time
+# Archive Lambda function code into a zip file
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "${path.module}/lambda/lambda_function.py"
   output_path = "${path.module}/lambda/lambda_function.zip"
 }
 
-# IAM role for Lambda
+# IAM role for Lambda function
 resource "aws_iam_role" "lambda_exec" {
   name = "csv-processor-lambda-role"
 
@@ -21,13 +21,13 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-# Basic CloudWatch Logs permissions
+# Attach basic Lambda execution role for CloudWatch Logs
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# Scoped S3 permissions - only this bucket, only get/put
+# Scoped S3 permissions - only this bucket, only get/put operations
 resource "aws_iam_role_policy" "lambda_s3_access" {
   name = "lambda-s3-csv-access"
   role = aws_iam_role.lambda_exec.id
@@ -45,7 +45,7 @@ resource "aws_iam_role_policy" "lambda_s3_access" {
   })
 }
 
-# The Lambda function itself
+# Lambda function for CSV processing
 resource "aws_lambda_function" "csv_processor" {
   function_name    = "csv-processor"
   role             = aws_iam_role.lambda_exec.arn
@@ -57,7 +57,7 @@ resource "aws_lambda_function" "csv_processor" {
   memory_size      = 128
 }
 
-# Allow S3 to invoke this Lambda
+# Allow S3 bucket to invoke the Lambda function
 resource "aws_lambda_permission" "allow_s3" {
   statement_id  = "AllowExecutionFromS3"
   action        = "lambda:InvokeFunction"
@@ -66,7 +66,7 @@ resource "aws_lambda_permission" "allow_s3" {
   source_arn    = aws_s3_bucket.this.arn
 }
 
-# S3 event notification -> trigger Lambda on .csv upload
+# Configure S3 bucket to trigger Lambda on CSV uploads
 resource "aws_s3_bucket_notification" "csv_trigger" {
   bucket = aws_s3_bucket.this.id
 
