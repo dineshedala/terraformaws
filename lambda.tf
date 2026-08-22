@@ -56,6 +56,9 @@ resource "aws_iam_role_policy" "lambda_s3_access" {
       Resource = "${local.bucket_id}/*"
     }]
   })
+
+  # Explicit dependency to ensure S3 bucket is created first
+  depends_on = [aws_s3_bucket.this]
 }
 
 # Lambda function for CSV processing
