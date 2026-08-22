@@ -53,7 +53,7 @@ resource "aws_iam_role_policy" "lambda_s3_access" {
         "s3:GetObject",
         "s3:PutObject"
       ]
-      Resource = "${local.bucket_id}/*"
+      Resource = "arn:aws:s3:::${local.bucket_id}/*"
     }]
   })
 
@@ -79,7 +79,7 @@ resource "aws_lambda_permission" "allow_s3" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.csv_processor.function_name
   principal     = "s3.amazonaws.com"
-  source_arn    = local.bucket_id
+  source_arn    = "arn:aws:s3:::${local.bucket_id}"
 }
 
 # Configure S3 bucket to trigger Lambda on CSV uploads
