@@ -1,9 +1,9 @@
 output "bucket_name" {
-  value = aws_s3_bucket.this.bucket
+  value = aws_s3_bucket.this[count.index]
 }
 
 output "bucket_arn" {
-  value = aws_s3_bucket.this.arn
+  value = aws_s3_bucket.this[count.index]
 }
 
 output "lambda_function_name" {
