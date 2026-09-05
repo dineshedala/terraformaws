@@ -7,4 +7,4 @@
 # secret_value = "your-secret-value-here"
 
 # AWS Region configuration
-aws_region = "us-east-1"
+aws_region = "ap-south-1"
